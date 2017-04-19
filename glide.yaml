@@ -1,0 +1,7 @@
+package: github.com/henvic/embroidery
+import:
+- package: github.com/hashicorp/errwrap
+- package: github.com/go-sql-driver/mysql
+  version: v1.3
+- package: github.com/gorilla/mux
+  version: v1.3.0
