@@ -1,0 +1,66 @@
+{{define "body"}}
+<h1>Endereços do cliente {{.Data.Client.FirstName }} {{.Data.Client.LastName}}</h1>
+<p><b>Client:</b> <a href="/clients/{{.Data.Client.ClientID}}">{{.Data.Client.FirstName }} {{.Data.Client.LastName}}</a></p>
+<div class="btn-group">
+<a href="/clients/{{.Data.Client.ClientID}}/address/add" class="btn btn-primary" role="button">Add a new address</a>
+</div>
+<p></p>
+<small>
+    {{if .Data.ShowArchived}}
+    <a href="/clients/{{.Data.Client.ClientID}}/address">mostrar apenas endereços ativos</a>
+    {{else}}
+    <a href="/clients/{{.Data.Client.ClientID}}/address?showArchived=true">mostrar endereços inativos</a>
+    {{end}}
+</small>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Address ID</th>
+            <th>Address</th>
+            <th>Phone</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+<tbody>
+{{range $address := .Data.Addresses}}
+{{if or (ne .Status "ARCHIVED") ($.Data.ShowArchived)}}
+    <tr>
+        <td>
+            {{if eq .Status "ARCHIVED"}}
+            <del><a href="/clients/{{$.Data.Client.ClientID}}/address/{{.AddressID}}">{{.AddressID}}</a></del>
+            {{else}}
+            <a href="/clients/{{$.Data.Client.ClientID}}/address/{{.AddressID}}">{{.AddressID}}</a>
+            {{end}}
+        </td>
+        <td>
+            <address>
+                {{.Name}}<br />
+                {{.AddressLine1 }}<br />
+                {{.AddressLine2}}<br />
+                {{.ZipCode}}<br />
+                {{.City }} - {{.State}}<br />
+                {{.Country}}
+            </address>
+        </td>
+        <td>
+            {{if eq .Status "ARCHIVED"}}
+            <del><a href="tel:{{.Phone}}">{{.Phone}}</a></del>
+            {{else}}
+            <a href="tel:{{.Phone}}">{{.Phone}}</a>
+            {{end}}
+        </td>
+        <td>{{.Status | lower}}</td>
+    </tr>
+{{end}}
+{{end}}
+</tbody>
+<tfoot>
+    <tr>
+        <th>Address ID</th>
+        <th>Address</th>
+        <th>Phone</th>
+        <th>Status</th>
+    </tr>
+</tfoot>
+</table>
+{{end}}

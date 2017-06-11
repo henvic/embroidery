@@ -1,0 +1,15 @@
+{{define "body"}}
+<h1>Adicionar asset do cliente {{.Data.Client.FirstName }} {{.Data.Client.LastName}}</h1>
+<p><b>Client ID:</b> {{.Data.Client.ClientID}}</p>
+<form method="POST">
+  <div class="form-group">
+    <label for="filepath">Filepath</label>
+    <input type="text" class="form-control" id="filepath" name="filepath" placeholder="i.e., /dataset/print/example.tiff">
+  </div>
+  <div class="form-group">
+    <label for="original">Original filepath</label>
+    <input type="text" class="form-control" id="original" name="original_filepath" placeholder="i.e., /dataset/originals/example.tiff">
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{{end}}

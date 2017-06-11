@@ -1,0 +1,31 @@
+{{define "body"}}
+<h1>Registro de Pagamento</h1>
+<form method="POST">
+<div class="form-group">
+<label class="control-label">Order ID</label>
+<div>
+    <p class="form-control-static"><a href="/orders/{{.Data.Order.OrderID}}">{{.Data.Order.OrderID}}</a></p>
+</div>
+<div class="form-group">
+<label class="control-label">Client</label>
+<div>
+    <p class="form-control-static"><a href="/clients/{{.Data.Client.ClientID}}">{{.Data.Client.FirstName }} {{.Data.Client.LastName}}</a>
+        <small><a href="mailto:{{.Data.Client.Email}}">✉&nbsp;{{.Data.Client.Email}}</a></small></p>
+</div>
+<div class="form-group">
+<label for="price">Price</label>
+<input type="text" class="form-control" id="price" name="price_total" placeholder="0">
+</div>
+<div class="form-group">
+    <label for="provider">Provider</label>
+    <select id="provider" name="provider" size="4" class="form-control">
+        {{range $k, $v := .Data.AllProviders}}
+        {{if ne $k ""}}
+        <option value="{{$k}}">{{$v}}</option>
+        {{end}}
+        {{end}}
+    </select>
+</div>
+  <button type="submit" class="btn btn-primary">Create</button>
+</form>
+{{end}}

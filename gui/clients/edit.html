@@ -1,0 +1,29 @@
+{{define "body"}}
+<h1>Editing client {{.Data.Client.ClientID}}</h1>
+<a href="/orders?client_id={{.Data.Client.ClientID}}" class="btn btn-secondary" role="button">Orders</a>
+<a href="/clients/{{.Data.Client.ClientID}}/assets" class="btn btn-secondary" role="button">Assets</a>
+<a href="/clients/{{.Data.Client.ClientID}}/address" class="btn btn-secondary" role="button">Endereços</a>
+<form method="POST" action="/clients/{{.Data.Client.ClientID}}">
+  <div class="form-group">
+    <label for="edit_client_first_name">First name</label>
+    <input type="first_name" class="form-control" id="edit_client_first_name" name="first_name" placeholder="First name" value="{{.Data.Client.FirstName}}">
+  </div>
+  <div class="form-group">
+    <label for="editw_client_last_name">Last name</label>
+    <input type="last_name" class="form-control" id="editw_client_last_name" name="last_name" placeholder="Last name"  value="{{.Data.Client.LastName}}">
+  </div>
+  <div class="form-group">
+    <label for="email">Email address</label>
+    <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter email" value="{{.Data.Client.Email}}">
+    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+  </div>
+  <div class="form-group">
+    <label for="edit_client_status">Status</label>
+    <select class="form-control" id="edit_client_status" name="status">
+      <option value="active" {{if eq .Data.Client.Status "ACTIVE"}}selected="selected"{{end}}>Active</option>
+      <option value="archived"{{if eq .Data.Client.Status "ARCHIVED"}}selected="selected"{{end}}>Archived</option>
+    </select>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{{end}}

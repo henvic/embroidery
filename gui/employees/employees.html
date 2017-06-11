@@ -1,0 +1,53 @@
+{{define "body"}}
+<h1>Empregados e controle de acesso ao sistema</h1>
+<div class="btn-group">
+<a href="/employees/add" class="btn btn-primary" role="button">Create a new user</a>
+</div>
+<p></p>
+<small>
+    {{if .Data.ShowRevoked}}
+    <a href="/employees">mostrar apenas usuários ativos</a>
+    {{else}}
+    <a href="/employees?showRevoked=true">mostrar usuários desativados</a>
+    {{end}}
+</small>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Access Level</th>
+        </tr>
+    </thead>
+<tbody>
+{{range $employee := .Data.Employees}}
+{{if or (ne .AccessLevel "REVOKED") ($.Data.ShowRevoked)}}
+    <tr>
+        <td>
+            {{if eq .AccessLevel "REVOKED"}}
+            <del>{{.EmployeeID}}</del>
+            {{else}}
+            {{.EmployeeID}}
+            {{end}}
+        </td>
+        <td>
+            {{if eq .AccessLevel "REVOKED"}}
+            <del>{{.Email}}</del>
+            {{else}}
+            {{.Email}}
+            {{end}}
+        </td>
+        <td>{{.AccessLevel | lower}} <small><a href="/employees/{{.EmployeeID}}">change</a></small></td>
+    </tr>
+{{end}}
+{{end}}
+</tbody>
+<tfoot>
+    <tr>
+        <th>ID</th>
+        <th>Email</th>
+        <th>Access Level</th>
+    </tr>
+</tfoot>
+</table>
+{{end}}

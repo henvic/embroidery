@@ -1,0 +1,67 @@
+{{define "body"}}
+<h1>Assets do cliente {{.Data.Client.FirstName }} {{.Data.Client.LastName}}</h1>
+<div class="btn-group">
+<a href="/clients/{{.Data.Client.ClientID}}/assets/add" class="btn btn-primary" role="button">Add a new asset</a>
+</div>
+<a href="/clients/{{.Data.Client.ClientID}}" class="btn btn-secondary">Cliente {{.Data.Client.FirstName }} {{.Data.Client.LastName}}</a>
+<a href="/orders?client_id={{.Data.Client.ClientID}}" class="btn btn-secondary">Orders</a>
+<p></p>
+<small>
+    {{if .Data.ShowArchived}}
+    <a href="/clients/{{.Data.Client.ClientID}}/assets">mostrar apenas assets atuais</a>
+    {{else}}
+    <a href="/clients/{{.Data.Client.ClientID}}/assets?showArchived=true">mostrar assets arquivados</a>
+    {{end}}
+</small>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Asset ID</th>
+            <th>Filepath</th>
+            <th>Original</th>
+            <th>Received</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+<tbody>
+{{range $asset := .Data.Assets}}
+{{if or (ne .Status "ARCHIVED") ($.Data.ShowArchived)}}
+    <tr>
+        <td>
+            {{if eq .Status "ARCHIVED"}}
+            <del><a href="/clients/{{$.Data.Client.ClientID}}/assets/{{.AssetID}}">{{.AssetID}}</a></del>
+            {{else}}
+            <a href="/clients/{{$.Data.Client.ClientID}}/assets/{{.AssetID}}">{{.AssetID}}</a>
+            {{end}}
+        </td>
+        <td>
+            {{if eq .Status "ARCHIVED"}}
+            <del>{{.Filepath}}</del>
+            {{else}}
+            {{.Filepath}}
+            {{end}}
+        </td>
+        <td>
+            {{if eq .Status "ARCHIVED"}}
+            <del>{{.OriginalFilepath}}</del>
+            {{else}}
+            {{.OriginalFilepath}}
+            {{end}}
+        </td>
+        <td>{{.ReceivedDate}}</td>
+        <td>{{.Status | lower}}</td>
+    </tr>
+{{end}}
+{{end}}
+</tbody>
+<tfoot>
+    <tr>
+        <th>Asset ID</th>
+        <th>Filepath</th>
+        <th>Original</th>
+        <th>Received</th>
+        <th>Status</th>
+    </tr>
+</tfoot>
+</table>
+{{end}}

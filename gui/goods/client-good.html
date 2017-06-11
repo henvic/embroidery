@@ -1,0 +1,72 @@
+{{define "body"}}
+<h1>Good #{{.Data.Good.GoodID}}</h1>
+{{if eq .Data.Job.Status "OPEN"}}
+<a href="/orders/{{$.Data.Job.JobID}}/add-job" class="btn btn-primary" role="button">Create a new job</a>
+{{end}}
+<form method="POST" action="/goods/{{.Data.Good.GoodID}}">
+<p class="form-control-static">
+    Job: <a href="/jobs/{{.Data.Job.JobID}}">{{.Data.Good.JobID}}</a>
+</p>
+<p class="form-control-static">
+    Order: <a href="/clients/{{.Data.Order.OrderID}}">{{.Data.Order.OrderID }} <small>(<b>status:</b> {{lower .Data.Order.Status}}</b>)</small></a>
+</p>
+<p class="form-control-static">
+Client: <a href="/clients/{{.Data.Client.ClientID}}">{{.Data.Client.FirstName }} {{.Data.Client.LastName}}</a>
+<small><a href="mailto:{{.Data.Client.Email}}">{{.Data.Client.Email}}</a></small>
+</p>
+<p class="form-control-static">
+Date: {{.Data.Good.Date}}
+</p>
+<div class="form-group">
+<label for="edit-order-status">Status</label>
+<select class="form-control" id="edit-order-status" name="status">
+{{range $k, $status := .Data.AllStatus}}
+{{if ne $k ""}}
+    <option value="{{$k}}" {{if eq $.Data.Job.Status (upper $k)}}selected="selected"{{end}}>{{$status}}</option>
+{{end}}
+{{end}}
+</select>
+</div>
+<div class="form-group">
+<label for="amount">Amount</label>
+<input type="text" class="form-control" id="amount" name="amount" placeholder="0" value="{{.Data.Job.Amount}}">
+</div>
+<div class="form-group">
+<label for="good-type">Type</label>
+<select class="form-control" id="good-type" name="type">
+    {{range $k, $v := .Data.AvailableTypes}}
+    <option value="{{$k}}" {{if eq $.Data.Good.Type (upper $k)}}selected="selected"{{end}}>{{$v}}</option>
+    {{end}}
+</select>
+</div>
+<div class="form-group">
+<label for="good-unit">Unit</label>
+<select class="form-control" id="good-unit" name="unit">
+    {{range $k, $v := .Data.AvailableUnits}}
+    <option value="{{$k}}" {{if eq $.Data.Good.Unit (upper $k)}}selected="selected"{{end}}>{{$v}}</option>
+    {{end}}
+</select>
+</div>
+<div class="form-group">
+<label for="good-employee">Empregado responsável</label>
+<select class="form-control" id="good-employee" name="employee_id" size="10">
+    {{range $e := .Data.Employees}}
+    <option value="{{.EmployeeID}}" {{if eq $.Data.Good.EmployeeID $e.EmployeeID}}selected="selected"{{end}}>{{$e.Email}} ({{$e.EmployeeID}})</option>
+    {{end}}
+</select>
+</div>
+<div class="form-group">
+<label for="notes">Notes</label>
+<textarea id="notes" name="notes" class="form-control" rows="3">{{.Data.Good.Notes}}</textarea>
+</div>
+<div class="form-group">
+<button type="submit" class="btn btn-primary">Update good</button>
+</div>
+</form>
+<hr />
+<a href="/jobs?order_id={{$.Data.Job.JobID}}" class="btn btn-secondary">View job</a>
+<a href="/jobs?order_id={{$.Data.Job.OrderID}}" class="btn btn-secondary">View job order</a>
+<a href="/orders?client_id={{.Data.Client.ClientID}}" class="btn btn-secondary">Jobs by {{.Data.Client.FirstName }} {{.Data.Client.LastName}}</a></small>
+<a href="/clients/{{.Data.Client.ClientID}}/assets" class="btn btn-secondary">Assets of {{.Data.Client.FirstName }} {{.Data.Client.LastName}}</a></small>
+<a href="/clients/{{.Data.Client.ClientID}}/address/add" class="btn btn-secondary">Adicionar novo endereço</a>
+{{end}}

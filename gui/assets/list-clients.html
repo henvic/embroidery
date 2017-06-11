@@ -1,0 +1,23 @@
+{{define "body"}}
+<h1>Assets of clients</h1>
+<p>Escolha o cliente para mostrar os seus assets disponíveis em nosso sistema para impressão ou registrar novos.</p>
+<table class="table table-striped">
+    <thead>
+        <th>Client Name</th>
+        <th>Client ID</th>
+        <th>Assets</th>
+    </thead>
+{{range $client := .Data.Clients}}
+<tr>
+    <td>{{.FirstName }} {{.LastName}}</td>
+    <td>{{.ClientID}}</td>
+    <td><a href="/clients/{{.ClientID}}/assets">assets</a></td>
+</tr>
+{{end}}
+<tfoot>
+    <th>Client Name</th>
+    <th>Client ID</th>
+    <th>Assets</th>
+</tfoot>
+</table>
+{{end}}

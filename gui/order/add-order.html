@@ -1,0 +1,14 @@
+{{define "body"}}
+<h1>Criando ordem de serviço</h1>
+<form method="POST">
+  <div class="form-group">
+    <label for="order-order-client">Client</label>
+    <select class="form-control" id="order-order-client" name="client_id" size="10">
+      {{range $client := .Data.Clients}}
+      <option value="{{.ClientID}}" {{if eq $.Data.MaybeClientID .ClientID}}selected="selected"{{end}}>{{.FirstName}} {{.LastName}} - {{.Email}} - {{.ClientID}}</option>
+      {{end}}
+    </select>
+  </div>
+  <button type="submit" class="btn btn-primary">Open</button>
+</form>
+{{end}}

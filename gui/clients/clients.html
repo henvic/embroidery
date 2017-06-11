@@ -1,0 +1,59 @@
+{{define "body"}}
+<h1>Lista de clientes</h1>
+<div class="btn-group">
+<a href="/clients/add" class="btn btn-primary" role="button">Add a new client</a>
+</div>
+<p></p>
+<small>
+    {{if .Data.ShowArchived}}
+    <a href="/clients">mostrar apenas clientes ativos</a>
+    {{else}}
+    <a href="/clients?showArchived=true">mostrar clientes inativos</a>
+    {{end}}
+</small>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>ID</th>
+            <th>Email</th>
+            <th><span class="invisible">Endereços</span></th>
+            <th>Status</th>
+        </tr>
+    </thead>
+<tbody>
+{{range $client := .Data.Clients}}
+{{if or (ne .Status "ARCHIVED") ($.Data.ShowArchived)}}
+    <tr>
+        <td>{{.FirstName }} {{.LastName}}</td>
+        <td>
+            {{if eq .Status "ARCHIVED"}}
+            <del><a href="/clients/{{.ClientID}}">{{.ClientID}}</a></del>
+            {{else}}
+            <a href="/clients/{{.ClientID}}">{{.ClientID}}</a>
+            {{end}}
+        </td>
+        <td>
+            {{if eq .Status "ARCHIVED"}}
+            <del>{{.Email}}</del>
+            {{else}}
+            <a href="mailto:{{.Email}}">{{.Email}}</a>
+            {{end}}
+        </td>
+        <td><a href="/clients/{{.ClientID}}/address" class="btn btn-secondary" role="button">Endereços</a></td>
+        <td>{{.Status | lower}}</td>
+    </tr>
+{{end}}
+{{end}}
+</tbody>
+<tfoot>
+    <tr>
+        <th>Name</th>
+        <th>ID</th>
+        <th>Email</th>
+        <th><span class="invisible">Endereços</span></th>
+        <th>Status</th>
+    </tr>
+</tfoot>
+</table>
+{{end}}

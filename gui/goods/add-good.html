@@ -1,0 +1,64 @@
+{{define "body"}}
+<h1>Adicionando consumível</h1>
+<form method="POST">
+<div class="form-group">
+<label class="control-label">Job ID</label>
+<div>
+    <p class="form-control-static"><a href="/jobs/{{.Data.Job.JobID}}">{{.Data.Job.JobID}}</a></p>
+</div>
+<div class="form-group">
+<label class="control-label">Client</label>
+<div>
+    <p class="form-control-static"><a href="/clients/{{.Data.Client.ClientID}}">{{.Data.Client.FirstName }} {{.Data.Client.LastName}}</a>
+        <small><a href="mailto:{{.Data.Client.Email}}">✉&nbsp;{{.Data.Client.Email}}</a></small></p>
+</div>
+</div>
+<div class="form-group">
+<a href="/clients/{{.Data.Client.ClientID}}/assets/add" class="btn btn-secondary" role="button">Add a new asset</a>
+</div>
+<div class="form-group">
+<label for="amount">Amount</label>
+<input type="text" class="form-control" id="amount" name="amount" placeholder="0">
+</div>
+<div class="form-group">
+<label for="good-type">Type</label>
+<select class="form-control" id="good-type" name="type">
+    {{range $k, $v := .Data.AvailableTypes}}
+    <option value="{{$k}}">{{$v}}</option>
+    {{end}}
+</select>
+</div>
+<div class="form-group">
+<label for="good-unit">Unit</label>
+<select class="form-control" id="good-unit" name="unit">
+    {{range $k, $v := .Data.AvailableUnits}}
+    <option value="{{$k}}">{{$v}}</option>
+    {{end}}
+</select>
+</div>
+<div class="form-group">
+<label for="good-status">Status</label>
+<select class="form-control" id="good-status" name="status">
+    {{range $k, $v := .Data.AllStatus}}
+    {{if ne $k ""}}
+    <option value="{{$k}}">{{$v}}</option>
+    {{end}}
+    {{end}}
+</select>
+</div>
+<div class="form-group">
+<label for="notes">Notes</label>
+<textarea id="notes" name="notes" class="form-control" rows="3"></textarea>
+</div>
+<div class="form-group">
+<label for="good-employee">Empregado responsável</label>
+<select class="form-control" id="good-employee" name="employee_id" size="10">
+    {{range $e := .Data.Employees}}
+    <option value="{{.EmployeeID}}">{{$e.Email}} ({{$e.EmployeeID}})</option>
+    {{end}}
+</select>
+</div>
+</div>
+  <button type="submit" class="btn btn-primary">Create</button>
+</form>
+{{end}}

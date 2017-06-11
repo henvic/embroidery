@@ -1,0 +1,19 @@
+{{define "body"}}
+<h1>Cadastro de cliente</h1>
+<form method="POST" action="/clients/add">
+  <div class="form-group">
+    <label for="new_client_first_name">First name</label>
+    <input type="first_name" class="form-control" id="new_client_first_name" name="first_name" placeholder="First name">
+  </div>
+  <div class="form-group">
+    <label for="new_client_last_name">Last name</label>
+    <input type="last_name" class="form-control" id="new_client_last_name" name="last_name" placeholder="Last name">
+  </div>
+  <div class="form-group">
+    <label for="email">Email address</label>
+    <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter email">
+    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{{end}}

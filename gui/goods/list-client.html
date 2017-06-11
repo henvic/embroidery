@@ -1,0 +1,81 @@
+{{define "body"}}
+<h1>Lista de consumíveis
+{{if .Data.Job}} do job {{.Data.Job.JobID}}{{end}}
+{{if .Data.Client}} do cliente {{.Data.Client.FirstName }} {{.Data.Client.LastName}}{{end}}
+</h1>
+<p>
+{{if .Data.Job}}
+<b>Job status:</b> {{lower .Data.Job.Status}} <small>(<a href="/jobs/{{.Data.Job.JobID}}">view</a>)</small>
+{{end}}
+</p>
+<small>
+<b>show</b>
+{{range $k, $status := .Data.AllStatus}}
+{{if eq $k $.Data.CurrentStatus}}
+{{$status}}
+{{else}}
+{{if not $.Data.Job}}
+<a href="/goods?status={{$k}}">{{$status}}</a>
+{{else}}
+<a href="/goods?status={{$k}}&amp;job_id={{$.Data.Job.JobID}}">{{$status}}</a>
+{{end}}
+{{end}}
+{{if ne $k "missing"}}
+|
+{{end}}
+{{end}}
+</small>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Good ID</th>
+            <th>Job ID</th>
+            <th>Client</th>
+            <th>Employee</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+<tbody>
+{{range $good := .Data.Goods}}
+    <tr>
+        <td>
+            <a href="/goods/{{.GoodID}}">{{.GoodID}}</a>
+        </td>
+        <td>
+            <a href="/jobs/{{.JobID}}">{{.JobID}}</a>
+        </td>
+        <td>
+            {{$client := index $.Data.ClientsMap .OwnerID}}
+            <a href="/clients/{{$client.ClientID}}">{{$client.FirstName }} {{$client.LastName }}</a>
+            {{if not $.Data.Client}}
+            <small>(<b><a href="/orders?client_id={{$client.ClientID}}">orders</a></b>)</small>
+            {{end}}
+            <br />
+            <small><a href="mailto:{{$client.Email}}">✉&nbsp;{{$client.Email}}</a></small>
+        </td>
+        <td>
+            {{.EmployeeID}}
+        </td>
+        <td>
+            {{.Date}}
+        </td>
+        <td>{{.Amount}} {{.Type | lower}} <small>(type&nbsp;{{.Unit | lower}})</small></td>
+        <td>{{.Status | lower}}</td>
+    </tr>
+{{end}}
+</tbody>
+<tfoot>
+    <tr>
+        <th>Good ID</th>
+        <th>Job ID</th>
+        <th>Client</th>
+        <th>Employee</th>
+        <th>Date</th>
+        <th>Amount</th>
+        <th>Status</th>
+    </tr>
+</tfoot>
+</table>
+{{end}}

@@ -1,0 +1,28 @@
+{{define "body"}}
+<h1>Editando asset do cliente {{.Data.Client.FirstName }} {{.Data.Client.LastName}}</h1>
+<ul>
+    <li>Asset ID: {{.Data.Asset.AssetID}}</li>
+    <li>Client ID: {{.Data.Client.ClientID}}</li>
+</ul>
+<form method="POST">
+  <div class="form-group">
+    <label for="original">Original filepath</label>
+    <input type="text" class="form-control" id="original" value="{{.Data.Asset.OriginalFilepath}}" readonly>
+    <small id="originalHelp" class="form-text text-muted">You can't change an asset original filepath.</small>
+  </div>
+  <div class="form-group">
+    <label for="filepath">Filepath</label>
+    <input type="text" class="form-control" id="filepath" name="filepath" value="{{.Data.Asset.Filepath}}">
+  </div>
+  <div class="form-group">
+    <label for="edit-asset-status" class="control-label">Status</label>
+    <select class="form-control" id="edit-asset-status" name="status">
+          <option value="active" {{if eq .Data.Asset.Status "ACTIVE"}}selected="selected"{{end}}>Active</option>
+          <option value="archived" {{if eq .Data.Asset.Status "ARCHIVED"}}selected="selected"{{end}}>Archived</option>
+      </select>
+  </div>
+  <div class="form-group">
+  <button type="submit" class="btn btn-primary">Change</button>
+  </div>
+</form>
+{{end}}

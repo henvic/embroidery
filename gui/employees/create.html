@@ -1,0 +1,23 @@
+{{define "body"}}
+<h1>Add a new employee</h1>
+<form method="POST">
+<div class="form-group">
+    <label for="employee-create-email">Email</label>
+    <input id="employee-create-email" type="email" name="email" placeholder="Add new employee email" class="form-control" />
+</div>
+<div class="form-group">
+    <label for="employee-create-password">Password</label>
+    <input id="employee-create-password" type="password" name="password" autocomplete="new-password" placeholder="Password" class="form-control" />
+</div>
+<div class="form-group">
+    <label for="employee-create-access-level">Access Level</label>
+    <select id="employee-create-access-level" class="form-control" name="access_level">
+        <option value="employee" selected="selected">Employee</option>
+        <option value="owner">Owner</option>
+    </select>
+</div>
+<div class="form-group">
+    <button type="submit" class="btn btn-primary">Submit</button>
+</div>
+</form>
+{{end}}

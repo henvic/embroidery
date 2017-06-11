@@ -1,0 +1,51 @@
+{{define "body"}}
+<h1>Order #{{.Data.Order.OrderID}}</h1>
+<ul>
+    <li>Client: <a href="/clients/{{.Data.Client.ClientID}}">{{.Data.Client.FirstName }} {{.Data.Client.LastName}}</a>
+    <small><a href="mailto:{{.Data.Client.Email}}">{{.Data.Client.Email}}</a></small></li>
+    <li>Date open: {{.Data.Order.OpenTime}}</li>
+{{if eq .Data.Order.Status "DONE"}}
+    <li>Date closed: {{.Data.Order.CloseTime}}</li>
+{{end}}
+    <li>$ Total: {{.Data.Order.PriceTotal}}</li>
+</ul>
+<div class="form-group">
+{{if eq .Data.Order.Status "OPEN"}}
+<a href="/orders/{{$.Data.Order.OrderID}}/add-job" class="btn btn-primary" role="button">Create a new job</a>
+{{end}}
+<a href="/jobs?order_id={{$.Data.Order.OrderID}}" class="btn btn-secondary">View jobs for this order</a>
+{{if and (ne .Data.Order.Status "DONE") (ne .Data.Order.Status "CANCELED")}}
+<a href="/orders/{{.Data.Order.OrderID}}/pay" class="btn btn-primary">Register payment</a>
+{{end}}
+<a href="/payments?order_id={{.Data.Order.OrderID}}" class="btn btn-secondary">View Payments</a>
+</div>
+<form method="POST" action="/orders/{{.Data.Order.OrderID}}">
+<div class="form-group">
+<label for="edit-order-status">Status</label>
+<select class="form-control" id="edit-order-status" name="status">
+{{range $k, $status := .Data.AllStatus}}
+{{if ne $k ""}}
+    <option value="{{$k}}" {{if eq $.Data.Order.Status (upper $k)}}selected="selected"{{end}}>{{$status}}</option>
+{{end}}
+{{end}}
+</select>
+</div>
+<div class="form-group">
+<label for="edit-order-address">Address</label>
+<select class="form-control" id="edit-order-address" name="client_address_id">
+{{range $address := .Data.Addresses}}
+    <option value="{{$address.AddressID}}"
+    {{if eq $address.AddressID $.Data.Order.ClientAddressID}}selected="selected"{{end}}
+    >{{$address.Name}} - {{$address.AddressLine1 }} {{$address.AddressLine2}} - {{$address.ZipCode}} - {{$address.City}}, {{$address.State}} - {{$address.Country}}</option>
+{{end}}
+</select>
+</div>
+<div class="form-group">
+<button type="submit" class="btn btn-primary">Update order</button>
+</div>
+</form>
+<hr />
+<a href="/orders?client_id={{.Data.Client.ClientID}}" class="btn btn-secondary">Orders by {{.Data.Client.FirstName }} {{.Data.Client.LastName}}</a></small>
+<a href="/clients/{{.Data.Client.ClientID}}/assets" class="btn btn-secondary">Assets of {{.Data.Client.FirstName }} {{.Data.Client.LastName}}</a></small>
+<a href="/clients/{{.Data.Client.ClientID}}/address/add" class="btn btn-secondary">Adicionar novo endereço</a>
+{{end}}

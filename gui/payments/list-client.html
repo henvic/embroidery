@@ -1,0 +1,76 @@
+{{define "body"}}
+<h1>Pagamentos
+{{if .Data.Order}} para a ordem {{.Data.Order.OrderID}}{{end}}
+{{if .Data.Client}} do cliente {{.Data.Client.FirstName }} {{.Data.Client.LastName}}{{end}}
+</h1>
+<p>
+{{if .Data.Order}}
+<b>Order provider:</b> {{lower .Data.Order.Status}} <small>(<a href="/orders/{{.Data.Order.OrderID}}">view</a>)</small>
+{{end}}
+</p>
+<small>
+<b>show</b>
+{{range $k, $provider := .Data.AllProviders}}
+{{if eq $k $.Data.CurrentProvider}}
+{{$provider}}
+{{else}}
+<a href="/payments?provider={{$k}}{{if and $.Data.Client (not $.Data.Order)}}&amp;client_id={{$.Data.Client.ClientID}}{{end}}{{if $.Data.Order}}&amp;order_id={{$.Data.Order.OrderID}}{{end}}">{{$provider}}</a>
+{{end}}
+{{if ne $k "money_transfer"}}
+|
+{{end}}
+{{end}}
+</small>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Payment ID</th>
+            <th>Order ID</th>
+            <th>Client</th>
+            <th>Price Total $</th>
+            <th>Provider</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+<tbody>
+{{range $job := .Data.Payments}}
+    <tr>
+        <td>
+            {{.PaymentID}}
+        </td>
+        <td>
+            <a href="/orders/{{.OrderID}}">{{.OrderID}}</a>
+            {{if not $.Data.Order}}
+            <small>(<b><a href="/payments?order_id={{.OrderID}}">payment list for order</a></b>)</small>
+            {{end}}
+        </td>
+        <td>
+            {{$client := index $.Data.ClientsMap .ClientID}}
+            <a href="/clients/{{$client.ClientID}}">{{$client.FirstName }} {{$client.LastName }}</a>
+            {{if not $.Data.Client}}
+            <br />
+            <small>(<b><a href="/payments?client_id={{.ClientID}}">payment list for client</a></b>)</small>
+            {{end}}
+            <br />
+            <small><a href="mailto:{{$client.Email}}">✉&nbsp;{{$client.Email}}</a></small>
+        </td>
+        <td>{{.PriceTotal}}</td>
+        <td>{{index $.Data.AllProviders (.Provider | lower)}}</td>
+        <td>
+            {{.Date}}
+        </td>
+    </tr>
+{{end}}
+</tbody>
+<tfoot>
+    <tr>
+        <th>Payment ID</th>
+        <th>Order ID</th>
+        <th>Client</th>
+        <th>Price Total $</th>
+        <th>Provider</th>
+        <th>Date</th>
+    </tr>
+</tfoot>
+</table>
+{{end}}

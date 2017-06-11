@@ -1,0 +1,86 @@
+{{define "body"}}
+{{if ne .Data.Client.ClientID ""}}
+<h1>Ordens do cliente {{.Data.Client.FirstName }} {{.Data.Client.LastName}}</h1>
+{{else}}
+<h1>Ordens</h1>
+{{end}}
+<div class="btn-group">
+{{if eq $.Data.Client.ClientID ""}}
+<a href="/orders/add" class="btn btn-primary" role="button">Open a new order</a>
+{{else}}
+<a href="/orders/add?maybe_client_id={{$.Data.Client.ClientID}}" class="btn btn-primary" role="button">Open a new order</a>
+{{end}}
+</div>
+<p></p>
+<small>
+<b>show</b>
+{{range $k, $status := .Data.AllStatus}}
+{{if eq $k $.Data.CurrentStatus}}
+{{$status}}
+{{else}}
+{{if eq $.Data.Client.ClientID ""}}
+<a href="/orders?status={{$k}}">{{$status}}</a>
+{{else}}
+<a href="/orders?status={{$k}}&amp;client_id={{$.Data.Client.ClientID}}">{{$status}}</a>
+{{end}}
+{{end}}
+{{if ne $k "waiting_for_payment"}}
+|
+{{end}}
+{{end}}
+</small>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Client</th>
+            <th>Open</th>
+            <th>Close</th>
+            <th>$&nbsp;Total</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+<tbody>
+{{range $order := .Data.Orders}}
+    <tr>
+        <td>
+            <a href="/orders/{{.OrderID}}">{{.OrderID}}</a>
+        </td>
+        <td>
+            {{$client := index $.Data.ClientsMap .ClientID}}
+            <a href="/clients/{{$client.ClientID}}">{{$client.FirstName }} {{$client.LastName }}</a>
+            {{if eq $.Data.Client.ClientID ""}}
+            <small>(<b><a href="/orders?client_id={{$client.ClientID}}">orders</a></b>)</small>
+            {{end}}
+            <br />
+            <small><a href="mailto:{{$client.Email}}">✉&nbsp;{{$client.Email}}</a></small>
+        </td>
+        <td>
+            {{.OpenTime}}
+        </td>
+        <td>
+            {{if eq .Status "DONE"}}
+            {{.CloseTime}}
+            {{end}}
+        </td>
+        <td>
+            {{if ne .PriceTotal 0}}
+            {{.PriceTotal}}
+            {{end}}
+        </td>
+        <td>{{.Status | lower}}</td>
+    </tr>
+{{end}}
+</tbody>
+<tfoot>
+    <tr>
+        <th>Order ID</th>
+        <th>Client</th>
+        <th>Open</th>
+        <th>Close</th>
+        <th>$&nbsp;Total</th>
+        <th>Status</th>
+    </tr>
+</tfoot>
+</table>
+{{end}}

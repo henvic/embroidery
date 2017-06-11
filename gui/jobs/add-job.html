@@ -1,0 +1,53 @@
+{{define "body"}}
+<h1>Criando trabalho de impressão</h1>
+<form method="POST">
+<div class="form-group">
+<label class="control-label">Order ID</label>
+<div>
+    <p class="form-control-static"><a href="/orders/{{.Data.Order.OrderID}}">{{.Data.Order.OrderID}}</a></p>
+</div>
+<div class="form-group">
+<label class="control-label">Client</label>
+<div>
+    <p class="form-control-static"><a href="/clients/{{.Data.Client.ClientID}}">{{.Data.Client.FirstName }} {{.Data.Client.LastName}}</a>
+        <small><a href="mailto:{{.Data.Client.Email}}">✉&nbsp;{{.Data.Client.Email}}</a></small></p>
+</div>
+</div>
+<div class="form-group">
+<a href="/clients/{{.Data.Client.ClientID}}/assets/add" class="btn btn-secondary" role="button">Add a new asset</a>
+</div>
+  <div class="form-group">
+    <label for="order-asset-client">Asset</label>
+    <select class="form-control" id="order-asset-client" name="asset_id" size="10">
+      {{range $asset := .Data.Assets}}
+      <option value="{{.AssetID}}">{{.Filepath}} (original: {{.OriginalFilepath}}) - {{.AssetID}}</option>
+      {{end}}
+    </select>
+  </div>
+  <div class="radio">
+  <label>
+    <input type="radio" name="type" id="typeM1" value="M1">
+    Máquina M1
+  </label>
+</div>
+<div class="radio">
+  <label>
+    <input type="radio" name="type" id="typeM2" value="M2">
+    Máquina M2
+  </label>
+</div>
+<div class="form-group">
+<label for="amount">Amount</label>
+<input type="text" class="form-control" id="amount" name="amount" placeholder="0">
+</div>
+<div class="form-group">
+<label for="price">Price</label>
+<input type="text" class="form-control" id="price" name="price" placeholder="0">
+</div>
+<div class="form-group">
+<label for="complexity">Complexity</label>
+<input type="text" class="form-control" id="complexity" name="complexity" placeholder="0">
+</div>
+  <button type="submit" class="btn btn-primary">Create</button>
+</form>
+{{end}}

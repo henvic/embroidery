@@ -1,0 +1,91 @@
+{{define "body"}}
+<h1>Fila de impressão
+{{if .Data.Order}} para a ordem {{.Data.Order.OrderID}}{{end}}
+{{if .Data.Client}} do cliente {{.Data.Client.FirstName }} {{.Data.Client.LastName}}{{end}}
+</h1>
+<p>
+{{if .Data.Order}}
+<b>Order status:</b> {{lower .Data.Order.Status}} <small>(<a href="/orders/{{.Data.Order.OrderID}}">view</a>)</small>
+{{end}}
+</p>
+<small>
+<b>show</b>
+{{range $k, $status := .Data.AllStatus}}
+{{if eq $k $.Data.CurrentStatus}}
+{{$status}}
+{{else}}
+{{if not $.Data.Client}}
+<a href="/jobs?status={{$k}}">{{$status}}</a>
+{{else}}
+<a href="/jobs?status={{$k}}&amp;client_id={{$.Data.Client.ClientID}}">{{$status}}</a>
+{{end}}
+{{end}}
+{{if ne $k "queue"}}
+|
+{{end}}
+{{end}}
+</small>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Job ID</th>
+            <th>Order ID</th>
+            <th>Client</th>
+            <th>Asset</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Amount</th>
+            <th>Complexity</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+<tbody>
+{{range $job := .Data.Jobs}}
+    <tr>
+        <td>
+            <a href="/jobs/{{.JobID}}">{{.JobID}}</a>
+        </td>
+        <td>
+            <a href="/orders/{{.OrderID}}">{{.OrderID}}</a>
+        </td>
+        <td>
+            {{$client := index $.Data.ClientsMap .ClientID}}
+            <a href="/clients/{{$client.ClientID}}">{{$client.FirstName }} {{$client.LastName }}</a>
+            {{if not $.Data.Client}}
+            <small>(<b><a href="/jobs?client_id={{$client.ClientID}}">job list</a></b>)</small>
+            {{end}}
+            <br />
+            <small><a href="mailto:{{$client.Email}}">✉&nbsp;{{$client.Email}}</a></small>
+        </td>
+        <td>
+            <a href="/clients/{{.ClientID}}/assets/{{.AssetID}}">{{.AssetID}}</a>
+        </td>
+        <td>
+            {{if .StartTime}}{{.StartTime}}{{end}}
+        </td>
+        <td>
+            {{if eq .Status "DONE"}}
+            {{.EndTime}}
+            {{end}}
+        </td>
+        <td>{{.Amount}} <small>(type&nbsp;{{.Type}})</small></td>
+        <td>{{.Complexity}}</td>
+        <td>{{.Status | lower}}</td>
+    </tr>
+{{end}}
+</tbody>
+<tfoot>
+    <tr>
+        <th>Job ID</th>
+        <th>Order ID</th>
+        <th>Client</th>
+        <th>Asset</th>
+        <th>Start</th>
+        <th>End</th>
+        <th>Amount</th>
+        <th>Complexity</th>
+        <th>Status</th>
+    </tr>
+</tfoot>
+</table>
+{{end}}
