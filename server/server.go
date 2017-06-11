@@ -11,9 +11,41 @@ import (
 	"sync"
 
 	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
 	"github.com/hashicorp/errwrap"
-	"github.com/henvic/embroidery/handlers"
+	"github.com/kisielk/sqlstruct"
 )
+
+const (
+	// UserSessionName is used by the cookie
+	UserSessionName = "userSession"
+)
+
+// SessionStore for the cookie store
+var SessionStore = sessions.NewCookieStore(
+	// "sessions/",
+	// securecookie.GenerateRandomKey(64),
+	[]byte("super-secret-key"),
+)
+
+var muxRouter = mux.NewRouter()
+
+// Instance of the server
+var Instance = &Server{
+	httpServer: &http.Server{
+		Handler: muxRouter,
+	},
+	mux: muxRouter,
+}
+
+func init() {
+	sqlstruct.NameMapper = sqlstruct.ToSnakeCase
+}
+
+// Start server for embroidery
+func Start(ctx context.Context, params Params) error {
+	return Instance.Serve(context.Background(), params)
+}
 
 // Params for configuring the server
 type Params struct {
@@ -41,6 +73,11 @@ func (s *Server) DB() *sql.DB {
 	return s.db
 }
 
+// Mux of the server
+func (s *Server) Mux() *mux.Router {
+	return s.mux
+}
+
 func (s *Server) createDBHandle() error {
 	db, err := sql.Open("mysql", s.params.DSN)
 
@@ -52,17 +89,12 @@ func (s *Server) createDBHandle() error {
 		fmt.Fprintf(os.Stderr, "Can not ping database: %v\n", err)
 	}
 
-	handlers.DB = db
+	s.db = db
 	return nil
 }
 
-// Mux of the server
-func (s *Server) Mux() *mux.Router {
-	return s.mux
-}
-
 // Serve handlers
-func (s *Server) Serve(ctx context.Context, params Params, r *mux.Router) error {
+func (s *Server) Serve(ctx context.Context, params Params) error {
 	s.ctx = ctx
 	s.params = params
 
@@ -77,8 +109,7 @@ func (s *Server) Serve(ctx context.Context, params Params, r *mux.Router) error 
 	}
 
 	fmt.Fprintf(os.Stdout, "Starting server on %v\n", address)
-	handlers.Load(r)
-	return s.serve(r)
+	return s.serve()
 }
 
 func (s *Server) listenHTTP(ctx context.Context) (address string, err error) {
@@ -107,11 +138,7 @@ func (s *Server) waitServer(w *sync.WaitGroup) {
 }
 
 // Serve HTTP requests
-func (s *Server) serve(r *mux.Router) error {
-	s.httpServer = &http.Server{
-		Handler: r,
-	}
-
+func (s *Server) serve() error {
 	var w sync.WaitGroup
 	w.Add(1)
 	go s.waitServer(&w)

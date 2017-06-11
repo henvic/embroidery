@@ -7,7 +7,7 @@ import (
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/gorilla/mux"
+	_ "github.com/henvic/embroidery/modules"
 	"github.com/henvic/embroidery/server"
 )
 
@@ -16,10 +16,7 @@ var params = server.Params{}
 func main() {
 	flag.Parse()
 
-	s := server.Server{}
-	r := mux.NewRouter()
-
-	if err := s.Serve(context.Background(), params, r); err != nil {
+	if err := server.Start(context.Background(), params); err != nil {
 		fmt.Fprintf(os.Stderr, "%v", err)
 		os.Exit(1)
 	}
