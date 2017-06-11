@@ -18,7 +18,7 @@ CREATE TABLE `address` (
   `country` varchar(50) NOT NULL DEFAULT '',
   `zip_code` int(11) NOT NULL,
   `phone` varchar(30) NOT NULL DEFAULT '',
-  `status` enum('ACTIVE','REMOVED') NOT NULL DEFAULT 'ACTIVE',
+  `status` enum('ACTIVE','ARCHIVED') NOT NULL DEFAULT 'ACTIVE',
   PRIMARY KEY (`address_id`),
   KEY `client_id` (`client_id`),
   CONSTRAINT `address_fk_clients_client_id` FOREIGN KEY (`address_id`) REFERENCES `clients` (`client_id`)
@@ -28,9 +28,9 @@ CREATE TABLE `asset` (
   `asset_id` char(36) NOT NULL,
   `client_id` char(36) NOT NULL DEFAULT '',
   `filepath` varchar(100) NOT NULL DEFAULT '',
-  `status` enum('ACTIVE','REMOVED') NOT NULL,
+  `status` enum('ACTIVE','ARCHIVED') NOT NULL DEFAULT 'ACTIVE',
   `original_filepath` varchar(100) NOT NULL DEFAULT '',
-  `received_date` datetime NOT NULL,
+  `received_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`asset_id`),
   KEY `client_id` (`client_id`),
   KEY `filepath` (`filepath`),
@@ -41,10 +41,10 @@ CREATE TABLE `asset` (
 CREATE TABLE `authentication` (
   `employee_id` char(36) NOT NULL,
   `email` varchar(254) NOT NULL DEFAULT '',
-  `password` char(32) NOT NULL DEFAULT '',
-  `access_level` enum('OWNER','EMPLOYEE') NOT NULL,
+  `password` char(64) NOT NULL DEFAULT '',
+  `access_level` enum('OWNER','EMPLOYEE','REVOKED') NOT NULL DEFAULT 'EMPLOYEE',
   PRIMARY KEY (`employee_id`),
-  KEY `email` (`email`)
+  UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `clients` (
@@ -58,7 +58,7 @@ CREATE TABLE `clients` (
   KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `goodsRecords` (
+CREATE TABLE `goods` (
   `good_id` char(36) NOT NULL,
   `job_id` char(36) NOT NULL DEFAULT '',
   `employee_id` char(36) NOT NULL DEFAULT '',
@@ -74,9 +74,9 @@ CREATE TABLE `goodsRecords` (
   KEY `employee_id` (`employee_id`),
   KEY `owner_id` (`owner_id`),
   KEY `type` (`type`),
-  CONSTRAINT `goodsRecords_fk_authentication_employee_id` FOREIGN KEY (`employee_id`) REFERENCES `authentication` (`employee_id`),
-  CONSTRAINT `goodsRecords_fk_clients_client_id` FOREIGN KEY (`owner_id`) REFERENCES `clients` (`client_id`),
-  CONSTRAINT `goodsRecords_fk_jobs_job_id` FOREIGN KEY (`job_id`) REFERENCES `job` (`job_id`)
+  CONSTRAINT `goods_fk_authentication_employee_id` FOREIGN KEY (`employee_id`) REFERENCES `authentication` (`employee_id`),
+  CONSTRAINT `goods_fk_clients_client_id` FOREIGN KEY (`owner_id`) REFERENCES `clients` (`client_id`),
+  CONSTRAINT `goods_fk_jobs_job_id` FOREIGN KEY (`job_id`) REFERENCES `job` (`job_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `job` (
@@ -88,8 +88,8 @@ CREATE TABLE `job` (
   `type` enum('M1','M2') NOT NULL,
   `amount` int(11) NOT NULL,
   `price` bigint(20) NOT NULL,
-  `start_time` datetime NOT NULL,
-  `end_time` datetime NOT NULL,
+  `start_time` datetime DEFAULT NULL,
+  `end_time` datetime DEFAULT NULL,
   `complexity` bigint(20) NOT NULL,
   PRIMARY KEY (`job_id`),
   KEY `order_id` (`order_id`),
@@ -106,7 +106,7 @@ CREATE TABLE `order` (
   `client_id` char(36) NOT NULL DEFAULT '',
   `client_address_id` char(36) NOT NULL DEFAULT '',
   `open_time` datetime NOT NULL,
-  `close_time` datetime NOT NULL,
+  `close_time` datetime DEFAULT NULL,
   `status` enum('OPEN','WAITING_FOR_PAYMENT','STAND_BY','QUEUE','IN_PROGRESS','CANCELED','DONE') NOT NULL,
   `price_total` bigint(20) NOT NULL,
   PRIMARY KEY (`order_id`),
@@ -117,16 +117,16 @@ CREATE TABLE `order` (
   CONSTRAINT `order_fk_clients_client_id` FOREIGN KEY (`client_id`) REFERENCES `clients` (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `orderPayment` (
+CREATE TABLE `payment` (
   `payment_id` char(36) NOT NULL,
   `client_id` char(36) NOT NULL DEFAULT '',
   `order_id` char(36) NOT NULL DEFAULT '',
   `price_total` bigint(20) NOT NULL,
   `provider` enum('CASH_FLOW','CREDIT_CARD','DEBIT_CARD','MONEY_TRANSFER') NOT NULL,
-  `time` datetime NOT NULL,
+  `date` datetime NOT NULL,
   PRIMARY KEY (`payment_id`),
   KEY `client_id` (`client_id`),
   KEY `order_id` (`order_id`),
-  CONSTRAINT `orderPayment_fk_clients_client_id` FOREIGN KEY (`client_id`) REFERENCES `clients` (`client_id`),
-  CONSTRAINT `orderPayment_fk_order_order_id` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`)
+  CONSTRAINT `payment_fk_clients_client_id` FOREIGN KEY (`client_id`) REFERENCES `clients` (`client_id`),
+  CONSTRAINT `payment_fk_order_order_id` FOREIGN KEY (`order_id`) REFERENCES `order` (`order_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
